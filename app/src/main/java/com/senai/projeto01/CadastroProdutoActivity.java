@@ -6,16 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.senai.projeto01.database.ProdutoDAO;
 import com.senai.projeto01.modelo.Produto;
 
 public class CadastroProdutoActivity extends AppCompatActivity {
 
-    private final int RESULT_CODE_NOVO_PRODUTO = 10;
-    private final int RESULT_CODE_PRODUTO_EDITADO = 11;
-    private final int RESULT_CODE_EXCLUIR_PRODUTO = 12;
-
-    private boolean edicao = false;
     private int id = 0;
 
     @Override
@@ -35,7 +32,6 @@ public class CadastroProdutoActivity extends AppCompatActivity {
             EditText editTextValor = findViewById(R.id.editText_valor);
             editTextNome.setText(produto.getNome());
             editTextValor.setText(String.valueOf(produto.getValor()));
-            edicao = true;
             id = produto.getId();
         }
     }
@@ -52,16 +48,14 @@ public class CadastroProdutoActivity extends AppCompatActivity {
         Float valor = Float.parseFloat(editTextValor.getText().toString());
 
         Produto produto = new Produto(id, nome, valor);
-        Intent intent = new Intent();
+        ProdutoDAO produtoDao = new ProdutoDAO(getBaseContext());
 
-        if (edicao) {
-            intent.putExtra("produtoEditado", produto);
-            setResult(RESULT_CODE_PRODUTO_EDITADO, intent);
+        boolean salvou = produtoDao.salvar(produto);
+        if (salvou) {
+            finish();
         } else {
-            intent.putExtra("novoProduto", produto);
-            setResult(RESULT_CODE_NOVO_PRODUTO, intent);
+            Toast.makeText(CadastroProdutoActivity.this, "Erro ao Salvar", Toast.LENGTH_LONG).show();
         }
-        finish();
     }
 
     public void onClickExcluir(View v) {
@@ -72,13 +66,13 @@ public class CadastroProdutoActivity extends AppCompatActivity {
         Float valor = Float.parseFloat(editTextValor.getText().toString());
 
         Produto produto = new Produto(id, nome, valor);
-        Intent intentExcluir = new Intent();
 
-        if (edicao) {
-            intentExcluir.putExtra("produtoExcluir", produto);
-            setResult(RESULT_CODE_EXCLUIR_PRODUTO, intentExcluir);
 
+        ProdutoDAO produtoDao = new ProdutoDAO(getBaseContext());
+        boolean excluiu = produtoDao.excluir(produto);
+        if (excluiu) {
             finish();
         }
     }
 }
+

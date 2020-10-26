@@ -1,6 +1,7 @@
 package com.senai.projeto01.modelo;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 
 public class Produto implements Serializable {
 
@@ -40,6 +41,6 @@ public class Produto implements Serializable {
 
     @Override
     public String toString() {
-        return nome;
+        return id + " - " + nome;
     }
 }
